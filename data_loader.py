@@ -4,17 +4,19 @@ import torchvision.transforms as transforms
 import os
 import random
 
+
 from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 
 class SiameseDataset(Dataset):
-	def __init__(self, alphabet_path_list, size, distort=False) :
+	def __init__(self, alphabet_path_list, size, transform=None, distort=False) :
 		'''
 			path_list : list of path of alphabet_folders to train;
 			size : size of dataset
 		'''
 		self.alphabet_path_list = alphabet_path_list
 		self.size = size
+		self.transform = transform
 		self.distort = distort
 		self.pairs = []
 		self.labels = []
@@ -33,6 +35,9 @@ class SiameseDataset(Dataset):
 
 			char_path_2 = char_path_1 if is_same \
 							else self.pop_subpath(char_list, alphabet_path)
+
+			if not is_same :
+				assert(char_path_1 != char_path_2)
 
 			# pop image's path from each character
 			image_list_1 = os.listdir(char_path_1)
@@ -58,12 +63,20 @@ class SiameseDataset(Dataset):
 		image_1 = Image.open(image_path_1).convert('1')
 		image_2 = Image.open(image_path_2).convert('1')
 
+		if self.transform is not None :
+			image_1 = self.transform(image_1)
+			image_2 = self.transform(image_2)
+
 		return image_1, image_2, label
 
-def get_loader(root, batch_size, dataset_size, shuffle) :
+	def __len__(self) :
+		return len(self.pairs)
+
+
+def get_loader(root, batch_size, dataset_size, shuffle, transform) :
 	alphabet_path_list = [os.path.join(root, alphabet) for alphabet in os.listdir(root)]
 
-	siamese = SiameseDataset(alphabet_path_list, dataset_size)
+	siamese = SiameseDataset(alphabet_path_list, dataset_size, transform=transform)
 
 	data_loader = DataLoader(dataset=siamese,
 							batch_size=batch_size,
