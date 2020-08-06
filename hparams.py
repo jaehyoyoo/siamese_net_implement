@@ -1,33 +1,33 @@
 import argparse
 
 class Hparams :
-	def __init__(self) :
-		self.random_seed = 
-
-
-
+	def __init__(self, args) :
+		self.model_path = args.model_path
+		self.bg_data_path = args.bg_data_path
+		self.log_step = args.log_step
+		self.save_step = args.save_step
+		self.num_epochs = args.num_epochs
+		self.batch_size = args.batch_size
+		self.dataset_size = args.dataset_size
+		self.learning_rate = args.learning_rate
+		self.momentum = args.momentum
+		self.reg_scale = args.reg_scale
 
 
 def get_hparams() :
 	parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str, default='models/' , help='path for saving trained models')
-    parser.add_argument('--crop_size', type=int, default=224 , help='size for randomly cropping images')
-    parser.add_argument('--vocab_path', type=str, default='data/vocab.pkl', help='path for vocabulary wrapper')
-    parser.add_argument('--image_dir', type=str, default='data/resized2014', help='directory for resized images')
-    parser.add_argument('--caption_path', type=str, default='data/annotations/captions_train2014.json', help='path for train annotation json file')
-    parser.add_argument('--log_step', type=int , default=10, help='step size for prining log info')
-    parser.add_argument('--save_step', type=int , default=1000, help='step size for saving trained models')
-    
-    # Model parameters
-    parser.add_argument('--embed_size', type=int , default=256, help='dimension of word embedding vectors')
-    parser.add_argument('--hidden_size', type=int , default=512, help='dimension of lstm hidden states')
-    parser.add_argument('--num_layers', type=int , default=1, help='number of layers in lstm')
-    
-    parser.add_argument('--num_epochs', type=int, default=5)
-    parser.add_argument('--batch_size', type=int, default=128)
-    parser.add_argument('--num_workers', type=int, default=2)
-    parser.add_argument('--learning_rate', type=float, default=0.001)
-    args = parser.parse_args()
-    print(args)
+	parser.add_argument('--model_path', type=str, default='model/' , help='path for saving trained models')
+	parser.add_argument('--bg_data_path', type=str, default="./data/images_background" , help='path for background data')
+	parser.add_argument('--log_step', type=int , default=100, help='step size for prining log info')
+	parser.add_argument('--save_step', type=int , default=1000, help='step size for saving trained models')
+	
+	parser.add_argument('--num_epochs', type=int, default=5)
+	parser.add_argument('--batch_size', type=int, default=128)
+	parser.add_argument('--dataset_size', type=int, default=30000)
+	parser.add_argument('--learning_rate', type=float, default=0.001)
+	parser.add_argument('--momentum', type=float, default=0.5)
+	parser.add_argument('--reg_scale', type=float, default=0.05)
+	args = parser.parse_args()
+	print(args)
 
-    return Hparams()
+	return Hparams(args)
