@@ -30,9 +30,9 @@ class SiameseNet(nn.Module) :
 
 	def forward(self, input_img_1, input_img_2) :
 		conved1 = self.conv_layer(input_img_1)
-		hidden1 = self.fc_layer(torch.flatten(conved1, start_dim=1))
-
 		conved2 = self.conv_layer(input_img_2)
+
+		hidden1 = self.fc_layer(torch.flatten(conved1, start_dim=1))
 		hidden2 = self.fc_layer(torch.flatten(conved2, start_dim=1))
 
 		prob = self.last_layer(torch.abs(hidden1 - hidden2))
